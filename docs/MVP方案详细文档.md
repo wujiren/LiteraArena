@@ -3,9 +3,11 @@
 ## 1. 项目概述
 
 ### 1.1 目标
+
 构建一个最小可行的大语言模型写作能力测试平台，用于评估LLM在文学创作方面的能力（模仿风格、结构复刻、语言表达）。
 
 ### 1.2 范围
+
 - 后端：TypeScript + Express
 - 前端：后续实现
 - 当前阶段：仅后端可运行
@@ -16,15 +18,15 @@
 
 ### 2.1 技术栈
 
-| 组件 | 技术 | 版本 |
-|------|------|------|
-| 运行时 | Node.js | >=18 |
-| 语言 | TypeScript | ^5.0 |
-| 框架 | Express | ^4.18 |
-| HTTP客户端 | axios | ^1.6 |
-| 环境变量 | dotenv | ^16.0 |
-| 并发控制 | p-limit | ^3.0 |
-| UUID生成 | uuid | ^9.0 |
+| 组件       | 技术       | 版本  |
+| ---------- | ---------- | ----- |
+| 运行时     | Node.js    | >=18  |
+| 语言       | TypeScript | ^5.0  |
+| 框架       | Express    | ^4.18 |
+| HTTP客户端 | axios      | ^1.6  |
+| 环境变量   | dotenv     | ^16.0 |
+| 并发控制   | p-limit    | ^3.0  |
+| UUID生成   | uuid       | ^9.0  |
 
 ### 2.2 项目结构
 
@@ -65,11 +67,11 @@ MAX_CONCURRENT=3
 
 ### 3.2 配置说明
 
-| 变量 | 说明 | 必填 |
-|------|------|------|
-| OPENROUTER_API_KEY | OpenRouter API密钥 | 是 |
-| PORT | 服务器端口 | 否，默认3000 |
-| MAX_CONCURRENT | 最大并发生成数 | 否，默认3 |
+| 变量               | 说明               | 必填         |
+| ------------------ | ------------------ | ------------ |
+| OPENROUTER_API_KEY | OpenRouter API密钥 | 是           |
+| PORT               | 服务器端口         | 否，默认3000 |
+| MAX_CONCURRENT     | 最大并发生成数     | 否，默认3    |
 
 ---
 
@@ -91,12 +93,12 @@ interface Topic {
  * 生成的文本
  */
 interface GeneratedText {
-  id: string;           // UUID，用于匿名标识
+  id: string; // UUID，用于匿名标识
   topicId: number;
-  modelId: string;      // 模型ID，如 "anthropic/claude-3-haiku"
-  modelName: string;    // 模型显示名，如 "Claude 3 Haiku"
-  content: string;      // 生成的文本内容
-  createdAt: string;    // ISO时间戳
+  modelId: string; // 模型ID，如 "anthropic/claude-3-haiku"
+  modelName: string; // 模型显示名，如 "Claude 3 Haiku"
+  content: string; // 生成的文本内容
+  createdAt: string; // ISO时间戳
 }
 
 /**
@@ -112,8 +114,8 @@ interface JudgeRequest {
  * 打分结果
  */
 interface JudgeResult {
-  ranking: string[];     // UUID数组，按最佳到最差排序
-  scores: Record<string, number>;  // UUID -> 标准分数
+  ranking: string[]; // UUID数组，按最佳到最差排序
+  scores: Record<string, number>; // UUID -> 标准分数
 }
 
 /**
@@ -129,13 +131,13 @@ interface ApiResponse<T> {
 ### 4.2 分数标准化规则
 
 | 排名 | 分数 |
-|------|------|
-| 1 | 10 |
-| 2 | 8 |
-| 3 | 6 |
-| 4 | 4 |
-| 5 | 2 |
-| 6+ | 1 |
+| ---- | ---- |
+| 1    | 10   |
+| 2    | 8    |
+| 3    | 6    |
+| 4    | 4    |
+| 5    | 2    |
+| 6+   | 1    |
 
 ---
 
@@ -144,11 +146,13 @@ interface ApiResponse<T> {
 ### 5.1 获取题目列表
 
 **请求**
+
 ```
 GET /api/topics
 ```
 
 **响应**
+
 ```json
 {
   "success": true,
@@ -170,11 +174,13 @@ GET /api/topics
 ### 5.2 获取可用模型
 
 **请求**
+
 ```
 GET /api/models
 ```
 
 **响应**
+
 ```json
 {
   "success": true,
@@ -188,6 +194,7 @@ GET /api/models
 ### 5.3 生成文本
 
 **请求**
+
 ```
 POST /api/generate
 Content-Type: application/json
@@ -199,6 +206,7 @@ Content-Type: application/json
 ```
 
 **响应**
+
 ```json
 {
   "success": true,
@@ -218,6 +226,7 @@ Content-Type: application/json
 ### 5.4 裁判打分
 
 **请求**
+
 ```
 POST /api/judge
 Content-Type: application/json
@@ -233,6 +242,7 @@ Content-Type: application/json
 ```
 
 **响应**
+
 ```json
 {
   "success": true,
@@ -254,33 +264,38 @@ Content-Type: application/json
 ### 6.1 OpenRouter服务 (src/services/openrouter.ts)
 
 **功能**
+
 - 封装OpenRouter API调用
 - 获取模型列表
 - 发送聊天请求
 - 错误处理与日志
 
 **API端点**
+
 - 模型列表: `GET https://openrouter.ai/api/v1/models`
 - 聊天完成: `POST https://openrouter.ai/api/v1/chat/completions`
 
 **请求头要求**
+
 ```typescript
 const headers = {
-  'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-  'HTTP-Referer': 'https://literaarena.local',  // OpenRouter要求
-  'X-Title': 'LiteraArena'                        // 应用名称
+  Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+  'HTTP-Referer': 'https://literaarena.local', // OpenRouter要求
+  'X-Title': 'LiteraArena', // 应用名称
 };
 ```
 
 ### 6.2 题目服务 (src/services/topicService.ts)
 
 **功能**
+
 - 从 `data/tests.md` 解析题目
 - 提供题目查询接口
 
 ### 6.3 生成路由 (src/routes/generate.ts)
 
 **流程**
+
 1. 接收 topicId 和 modelIds
 2. 查询题目详情
 3. 构造Prompt（注入题目要求）
@@ -290,6 +305,7 @@ const headers = {
 ### 6.4 裁判路由 (src/routes/judge.ts)
 
 **流程**
+
 1. 接收 texts 和 judgeModelId
 2. 随机打乱文本顺序（匿名化）
 3. 构造裁判Prompt
@@ -327,6 +343,7 @@ const headers = {
 ```
 
 **说明**：
+
 - 使用结构化格式（最佳/次佳/第三...最差）而非数组，降低解析失败率
 - 每个文本用UUID匿名标识，不暴露任何模型信息
 - 文本顺序已随机打乱，避免顺序偏好
@@ -347,9 +364,7 @@ const limit = pLimit(MAX_CONCURRENT);
 
 // 并发生成
 const results = await Promise.all(
-  modelIds.map(modelId =>
-    limit(() => generateText(modelId, topic))
-  )
+  modelIds.map((modelId) => limit(() => generateText(modelId, topic))),
 );
 ```
 
@@ -369,6 +384,7 @@ const results = await Promise.all(
 ### 8.2 简化错误处理策略（MVP阶段）
 
 MVP采用"快速失败"策略：
+
 - OpenRouter API错误 → 直接throw，500状态码返回
 - 参数校验失败 → 400状态码
 - 题目/模型不存在 → 404状态码

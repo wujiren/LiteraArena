@@ -14,7 +14,7 @@ export class OpenRouterService {
     this.apiKey = apiKey;
     this.client = axios.create({
       baseURL: OPENROUTER_API_BASE,
-      timeout,  // 可配置的超时时间
+      timeout, // 可配置的超时时间
     });
   }
 
@@ -43,7 +43,7 @@ export class OpenRouterService {
    */
   async chatCompletion(
     modelId: string,
-    messages: { role: 'system' | 'user' | 'assistant'; content: string }[]
+    messages: { role: 'system' | 'user' | 'assistant'; content: string }[],
   ): Promise<string> {
     const response = await this.client.post(
       '/chat/completions',
@@ -53,7 +53,7 @@ export class OpenRouterService {
       },
       {
         headers: this.getHeaders(),
-      }
+      },
     );
 
     // 提取助手回复内容
@@ -74,7 +74,7 @@ export class OpenRouterService {
   async generateText(
     modelId: string,
     prompt: string,
-    systemPrompt: string = '你是一位优秀的作家，请根据题目要求创作文本。直接输出创作内容，不要添加任何解释、标题或前言。'
+    systemPrompt: string = '你是一位优秀的作家，请根据题目要求创作文本。直接输出创作内容，不要添加任何解释、标题或前言。',
   ): Promise<string> {
     return this.chatCompletion(modelId, [
       { role: 'system', content: systemPrompt },
@@ -84,7 +84,7 @@ export class OpenRouterService {
 
   private getHeaders() {
     return {
-      'Authorization': `Bearer ${this.apiKey}`,
+      Authorization: `Bearer ${this.apiKey}`,
       'HTTP-Referer': 'https://literaarena.local',
       'X-Title': 'LiteraArena',
       'Content-Type': 'application/json',

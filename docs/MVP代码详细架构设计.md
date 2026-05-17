@@ -58,6 +58,7 @@
 ```
 
 **说明**：
+
 - 使用 `CommonJS` 模式以兼容 `p-limit` v3 等 CommonJS 依赖
 - 配合 `tsx` 运行，无需编译即可执行
 - 去掉 `.js` 后缀的 import（CommonJS 不需要）
@@ -80,12 +81,12 @@ export interface Topic {
  * 生成的文本
  */
 export interface GeneratedText {
-  id: string;           // UUID，用于匿名标识
+  id: string; // UUID，用于匿名标识
   topicId: number;
-  modelId: string;      // 模型ID，如 "anthropic/claude-3-haiku"
-  modelName: string;    // 模型显示名，如 "Claude 3 Haiku"
-  content: string;      // 生成的文本内容
-  createdAt: string;     // ISO时间戳
+  modelId: string; // 模型ID，如 "anthropic/claude-3-haiku"
+  modelName: string; // 模型显示名，如 "Claude 3 Haiku"
+  content: string; // 生成的文本内容
+  createdAt: string; // ISO时间戳
 }
 
 /**
@@ -109,8 +110,8 @@ export interface JudgeRequest {
  * 打分结果
  */
 export interface JudgeResult {
-  ranking: string[];                  // UUID数组，按最佳到最差排序
-  scores: Record<string, number>;    // UUID -> 标准分数
+  ranking: string[]; // UUID数组，按最佳到最差排序
+  scores: Record<string, number>; // UUID -> 标准分数
 }
 
 /**
@@ -120,7 +121,7 @@ export interface ApiResponse<T> {
   success: boolean;
   data?: T;
   error?: string;
-  warnings?: string[];  // 部分成功时的警告信息
+  warnings?: string[]; // 部分成功时的警告信息
 }
 
 /**
@@ -166,11 +167,11 @@ export function shuffle<T>(array: T[], seed?: string): T[] {
 export function normalizeScores(ranking: string[]): Record<string, number> {
   const scoreMap: Record<string, number> = {};
   const scoreTable: Record<number, number> = {
-    0: 10,  // 第1名
-    1: 8,   // 第2名
-    2: 6,   // 第3名
-    3: 4,   // 第4名
-    4: 2,   // 第5名
+    0: 10, // 第1名
+    1: 8, // 第2名
+    2: 6, // 第3名
+    3: 4, // 第4名
+    4: 2, // 第5名
   };
 
   ranking.forEach((uuid, index) => {
@@ -187,7 +188,7 @@ export function normalizeScores(ranking: string[]): Record<string, number> {
  */
 export function extractUuids(text: string): string[] {
   const uuidRegex = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
-  return (text.match(uuidRegex) || []).map(u => u.toLowerCase());
+  return (text.match(uuidRegex) || []).map((u) => u.toLowerCase());
 }
 
 /**
@@ -198,7 +199,7 @@ export function extractUuids(text: string): string[] {
  * @returns 在预期列表中的UUID（去重后，保持首次出现顺序）
  */
 export function filterExpectedUuids(uuids: string[], expectedIds: string[]): string[] {
-  const expectedSet = new Set(expectedIds.map(id => id.toLowerCase()));
+  const expectedSet = new Set(expectedIds.map((id) => id.toLowerCase()));
   const seen = new Set<string>();
   const result: string[] = [];
 
@@ -234,7 +235,7 @@ export class OpenRouterService {
     this.apiKey = apiKey;
     this.client = axios.create({
       baseURL: OPENROUTER_API_BASE,
-      timeout,  // 可配置的超时时间
+      timeout, // 可配置的超时时间
     });
   }
 
@@ -263,7 +264,7 @@ export class OpenRouterService {
    */
   async chatCompletion(
     modelId: string,
-    messages: { role: 'system' | 'user' | 'assistant'; content: string }[]
+    messages: { role: 'system' | 'user' | 'assistant'; content: string }[],
   ): Promise<string> {
     const response = await this.client.post(
       '/chat/completions',
@@ -273,7 +274,7 @@ export class OpenRouterService {
       },
       {
         headers: this.getHeaders(),
-      }
+      },
     );
 
     // 提取助手回复内容
@@ -294,7 +295,7 @@ export class OpenRouterService {
   async generateText(
     modelId: string,
     prompt: string,
-    systemPrompt: string = '你是一位优秀的作家，请根据题目要求创作文本。直接输出创作内容，不要添加任何解释、标题或前言。'
+    systemPrompt: string = '你是一位优秀的作家，请根据题目要求创作文本。直接输出创作内容，不要添加任何解释、标题或前言。',
   ): Promise<string> {
     return this.chatCompletion(modelId, [
       { role: 'system', content: systemPrompt },
@@ -304,7 +305,7 @@ export class OpenRouterService {
 
   private getHeaders() {
     return {
-      'Authorization': `Bearer ${this.apiKey}`,
+      Authorization: `Bearer ${this.apiKey}`,
       'HTTP-Referer': 'https://literaarena.local',
       'X-Title': 'LiteraArena',
       'Content-Type': 'application/json',
@@ -415,7 +416,7 @@ function parseTopicsFromMarkdown(content: string): Topic[] {
  */
 export function getTopicById(id: number): Topic | undefined {
   const topics = loadTopics();
-  return topics.find(t => t.id === id);
+  return topics.find((t) => t.id === id);
 }
 
 /**
@@ -430,9 +431,11 @@ export function getAllTopics(): Topic[] {
 
 ```markdown
 ### 1. 落日余晖
+
 > 描写"落日余晖"的场景，要求使用比喻和拟人手法，300字左右。
 
 ### 2. 云端摩天阁序
+
 > 请你接受一个高难度的文学挑战。请模仿王勃《滕王阁序》的风格和骈文体裁，描绘未来都市的夜景。
 ```
 
@@ -593,7 +596,7 @@ router.post('/', async (req, res) => {
 
     // 并发生成
     const service = getOpenRouterService();
-    const generationPromises = modelIds.map(modelId =>
+    const generationPromises = modelIds.map((modelId) =>
       limit(async () => {
         try {
           const content = await service.generateText(modelId, prompt);
@@ -610,7 +613,7 @@ router.post('/', async (req, res) => {
           console.error(`[${new Date().toISOString()}] ERROR [generate.${modelId}]:`, error);
           throw error;
         }
-      })
+      }),
     );
 
     const results = await Promise.allSettled(generationPromises);
@@ -624,7 +627,8 @@ router.post('/', async (req, res) => {
         generatedTexts.push(result.value);
       } else {
         // 保留错误原因，便于调试
-        const detail = result.reason instanceof Error ? result.reason.message : String(result.reason);
+        const detail =
+          result.reason instanceof Error ? result.reason.message : String(result.reason);
         errors.push(`模型 ${modelIds[index]} 生成失败: ${detail}`);
       }
     });
@@ -718,7 +722,10 @@ router.post('/', async (req, res) => {
     ]);
 
     // 解析裁判输出
-    const ranking = parseJudgeResponse(judgeResponse, texts.map(t => t.id));
+    const ranking = parseJudgeResponse(
+      judgeResponse,
+      texts.map((t) => t.id),
+    );
 
     if (!ranking || ranking.length < texts.length) {
       const response: ApiResponse<never> = {
@@ -757,7 +764,7 @@ router.post('/', async (req, res) => {
  */
 function buildJudgePrompt(
   topic: { title: string; description: string },
-  texts: { id: string; content: string }[]
+  texts: { id: string; content: string }[],
 ): string {
   const textsSection = texts
     .map((t, i) => `文本${i + 1}（ID: ${t.id}）:\n${t.content}`)
@@ -798,7 +805,9 @@ function parseJudgeResponse(response: string, expectedIds: string[]): string[] |
   const ranking: string[] = [];
 
   for (const line of lines) {
-    const match = line.match(/(?:最佳|次佳|第三|第(\d+)名|最差)\s*[:：]\s*([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i);
+    const match = line.match(
+      /(?:最佳|次佳|第三|第(\d+)名|最差)\s*[:：]\s*([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i,
+    );
     if (match) {
       ranking.push(match[2].toLowerCase());
     }
@@ -812,14 +821,14 @@ function parseJudgeResponse(response: string, expectedIds: string[]): string[] |
     // 按在响应中出现的顺序排序（去重后）
     if (filteredUuids.length >= expectedIds.length) {
       const orderMap = new Map<string, number>();
-      filteredUuids.forEach(uuid => {
+      filteredUuids.forEach((uuid) => {
         orderMap.set(uuid, response.toLowerCase().indexOf(uuid));
       });
       filteredUuids.sort((a, b) => orderMap.get(a)! - orderMap.get(b)!);
 
       // 验证是否包含所有期望的UUID
-      const hasAllExpected = expectedIds.every(id =>
-        filteredUuids.some(u => u === id.toLowerCase())
+      const hasAllExpected = expectedIds.every((id) =>
+        filteredUuids.some((u) => u === id.toLowerCase()),
       );
 
       if (hasAllExpected) {
@@ -848,7 +857,7 @@ import judgeRouter from './routes/judge';
 
 // 环境变量验证
 const requiredEnvVars = ['OPENROUTER_API_KEY'];
-const missing = requiredEnvVars.filter(key => !process.env[key]);
+const missing = requiredEnvVars.filter((key) => !process.env[key]);
 
 if (missing.length > 0) {
   console.error('缺少必需的环境变量:', missing.join(', '));
@@ -954,21 +963,21 @@ app.listen(PORT, () => {
 
 ## 12. 关键函数签名汇总
 
-| 模块 | 函数 | 签名 |
-|------|------|------|
-| openrouter.ts | `OpenRouterService.getModels()` | `() => Promise<ModelInfo[]>` |
-| openrouter.ts | `OpenRouterService.chatCompletion()` | `(modelId: string, messages: Message[]) => Promise<string>` |
-| openrouter.ts | `OpenRouterService.generateText()` | `(modelId: string, prompt: string, systemPrompt?: string) => Promise<string>` |
-| topicService.ts | `loadTopics()` | `() => Topic[]` |
-| topicService.ts | `getTopicById()` | `(id: number) => Topic \| undefined` |
-| topicService.ts | `getAllTopics()` | `() => Topic[]` |
-| shuffle.ts | `shuffle()` | `<T>(array: T[], seed?: string) => T[]` |
-| shuffle.ts | `normalizeScores()` | `(ranking: string[]) => Record<string, number>` |
-| shuffle.ts | `extractUuids()` | `(text: string) => string[]` |
-| shuffle.ts | `filterExpectedUuids()` | `(uuids: string[], expectedIds: string[]) => string[]` |
-| generate.ts | `buildPrompt()` | `(topic: Topic) => string` |
-| judge.ts | `buildJudgePrompt()` | `(topic: Topic, texts: Text[]) => string` |
-| judge.ts | `parseJudgeResponse()` | `(response: string, expectedIds: string[]) => string[] \| null` |
+| 模块            | 函数                                 | 签名                                                                          |
+| --------------- | ------------------------------------ | ----------------------------------------------------------------------------- |
+| openrouter.ts   | `OpenRouterService.getModels()`      | `() => Promise<ModelInfo[]>`                                                  |
+| openrouter.ts   | `OpenRouterService.chatCompletion()` | `(modelId: string, messages: Message[]) => Promise<string>`                   |
+| openrouter.ts   | `OpenRouterService.generateText()`   | `(modelId: string, prompt: string, systemPrompt?: string) => Promise<string>` |
+| topicService.ts | `loadTopics()`                       | `() => Topic[]`                                                               |
+| topicService.ts | `getTopicById()`                     | `(id: number) => Topic \| undefined`                                          |
+| topicService.ts | `getAllTopics()`                     | `() => Topic[]`                                                               |
+| shuffle.ts      | `shuffle()`                          | `<T>(array: T[], seed?: string) => T[]`                                       |
+| shuffle.ts      | `normalizeScores()`                  | `(ranking: string[]) => Record<string, number>`                               |
+| shuffle.ts      | `extractUuids()`                     | `(text: string) => string[]`                                                  |
+| shuffle.ts      | `filterExpectedUuids()`              | `(uuids: string[], expectedIds: string[]) => string[]`                        |
+| generate.ts     | `buildPrompt()`                      | `(topic: Topic) => string`                                                    |
+| judge.ts        | `buildJudgePrompt()`                 | `(topic: Topic, texts: Text[]) => string`                                     |
+| judge.ts        | `parseJudgeResponse()`               | `(response: string, expectedIds: string[]) => string[] \| null`               |
 
 ---
 
@@ -994,11 +1003,11 @@ types/index.ts (所有模块共享)
 
 ## 14. 环境变量
 
-| 变量 | 说明 | 必填 | 默认值 |
-|------|------|------|--------|
-| OPENROUTER_API_KEY | OpenRouter API密钥 | 是 | - |
-| PORT | 服务器端口 | 否 | 3000 |
-| MAX_CONCURRENT | 最大并发生成数 | 否 | 3 |
-| REQUEST_TIMEOUT | 请求超时（毫秒） | 否 | 300000 |
+| 变量               | 说明               | 必填 | 默认值 |
+| ------------------ | ------------------ | ---- | ------ |
+| OPENROUTER_API_KEY | OpenRouter API密钥 | 是   | -      |
+| PORT               | 服务器端口         | 否   | 3000   |
+| MAX_CONCURRENT     | 最大并发生成数     | 否   | 3      |
+| REQUEST_TIMEOUT    | 请求超时（毫秒）   | 否   | 300000 |
 
 启动时会验证 `OPENROUTER_API_KEY` 是否设置，缺失则报错退出。

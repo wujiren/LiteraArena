@@ -81,7 +81,7 @@ function parseTopicsFromMarkdown(content: string): Topic[] {
  */
 export function getTopicById(id: number): Topic | undefined {
   const topics = loadTopics();
-  return topics.find(t => t.id === id);
+  return topics.find((t) => t.id === id);
 }
 
 /**

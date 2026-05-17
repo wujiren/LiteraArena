@@ -7,7 +7,7 @@ import judgeRouter from './routes/judge';
 
 // 环境变量验证
 const requiredEnvVars = ['OPENROUTER_API_KEY'];
-const missing = requiredEnvVars.filter(key => !process.env[key]);
+const missing = requiredEnvVars.filter((key) => !process.env[key]);
 
 if (missing.length > 0) {
   console.error('缺少必需的环境变量:', missing.join(', '));

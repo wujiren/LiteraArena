@@ -27,11 +27,11 @@ export function shuffle<T>(array: T[], seed?: string): T[] {
 export function normalizeScores(ranking: string[]): Record<string, number> {
   const scoreMap: Record<string, number> = {};
   const scoreTable: Record<number, number> = {
-    0: 10,  // 第1名
-    1: 8,   // 第2名
-    2: 6,   // 第3名
-    3: 4,   // 第4名
-    4: 2,   // 第5名
+    0: 10, // 第1名
+    1: 8, // 第2名
+    2: 6, // 第3名
+    3: 4, // 第4名
+    4: 2, // 第5名
   };
 
   ranking.forEach((uuid, index) => {
@@ -48,7 +48,7 @@ export function normalizeScores(ranking: string[]): Record<string, number> {
  */
 export function extractUuids(text: string): string[] {
   const uuidRegex = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
-  return (text.match(uuidRegex) || []).map(u => u.toLowerCase());
+  return (text.match(uuidRegex) || []).map((u) => u.toLowerCase());
 }
 
 /**
@@ -59,7 +59,7 @@ export function extractUuids(text: string): string[] {
  * @returns 在预期列表中的UUID（去重后，保持首次出现顺序）
  */
 export function filterExpectedUuids(uuids: string[], expectedIds: string[]): string[] {
-  const expectedSet = new Set(expectedIds.map(id => id.toLowerCase()));
+  const expectedSet = new Set(expectedIds.map((id) => id.toLowerCase()));
   const seen = new Set<string>();
   const result: string[] = [];
 

@@ -45,7 +45,7 @@ router.post('/', async (req, res) => {
 
     // 并发生成
     const service = getOpenRouterService();
-    const generationPromises = modelIds.map(modelId =>
+    const generationPromises = modelIds.map((modelId) =>
       limit(async () => {
         try {
           const content = await service.generateText(modelId, prompt);
@@ -62,7 +62,7 @@ router.post('/', async (req, res) => {
           console.error(`[${new Date().toISOString()}] ERROR [generate.${modelId}]:`, error);
           throw error;
         }
-      })
+      }),
     );
 
     const results = await Promise.allSettled(generationPromises);
@@ -76,7 +76,8 @@ router.post('/', async (req, res) => {
         generatedTexts.push(result.value);
       } else {
         // 保留错误原因，便于调试
-        const detail = result.reason instanceof Error ? result.reason.message : String(result.reason);
+        const detail =
+          result.reason instanceof Error ? result.reason.message : String(result.reason);
         errors.push(`模型 ${modelIds[index]} 生成失败: ${detail}`);
       }
     });

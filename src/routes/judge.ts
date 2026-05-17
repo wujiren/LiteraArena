@@ -40,7 +40,10 @@ router.post('/', async (req, res) => {
     ]);
 
     // 解析裁判输出
-    const ranking = parseJudgeResponse(judgeResponse, texts.map(t => t.id));
+    const ranking = parseJudgeResponse(
+      judgeResponse,
+      texts.map((t) => t.id),
+    );
 
     if (!ranking || ranking.length < texts.length) {
       const response: ApiResponse<never> = {
@@ -79,7 +82,7 @@ router.post('/', async (req, res) => {
  */
 function buildJudgePrompt(
   topic: { title: string; description: string },
-  texts: { id: string; content: string }[]
+  texts: { id: string; content: string }[],
 ): string {
   const textsSection = texts
     .map((t, i) => `文本${i + 1}（ID: ${t.id}）:\n${t.content}`)
@@ -120,7 +123,9 @@ function parseJudgeResponse(response: string, expectedIds: string[]): string[] |
   const ranking: string[] = [];
 
   for (const line of lines) {
-    const match = line.match(/(?:最佳|次佳|第三|第(\d+)名|最差)\s*[:：]\s*([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i);
+    const match = line.match(
+      /(?:最佳|次佳|第三|第(\d+)名|最差)\s*[:：]\s*([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i,
+    );
     if (match) {
       ranking.push(match[2].toLowerCase());
     }
@@ -134,14 +139,14 @@ function parseJudgeResponse(response: string, expectedIds: string[]): string[] |
     // 按在响应中出现的顺序排序（去重后）
     if (filteredUuids.length >= expectedIds.length) {
       const orderMap = new Map<string, number>();
-      filteredUuids.forEach(uuid => {
+      filteredUuids.forEach((uuid) => {
         orderMap.set(uuid, response.toLowerCase().indexOf(uuid));
       });
       filteredUuids.sort((a, b) => orderMap.get(a)! - orderMap.get(b)!);
 
       // 验证是否包含所有期望的UUID
-      const hasAllExpected = expectedIds.every(id =>
-        filteredUuids.some(u => u === id.toLowerCase())
+      const hasAllExpected = expectedIds.every((id) =>
+        filteredUuids.some((u) => u === id.toLowerCase()),
       );
 
       if (hasAllExpected) {
