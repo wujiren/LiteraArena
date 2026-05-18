@@ -114,7 +114,7 @@ router.post('/', async (req, res) => {
  * 构造生成提示词
  * 输出约束由system prompt管理，职责更清晰
  */
-function buildPrompt(topic: Topic): string {
+export function buildPrompt(topic: Topic): string {
   return `【写作题目】${topic.title}
 
 【要求】

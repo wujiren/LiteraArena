@@ -80,7 +80,7 @@ router.post('/', async (req, res) => {
 /**
  * 构造裁判Prompt
  */
-function buildJudgePrompt(
+export function buildJudgePrompt(
   topic: { title: string; description: string },
   texts: { id: string; content: string }[],
 ): string {
@@ -117,7 +117,7 @@ ${textsSection}
  * 解析裁判模型的输出
  * 优先级：方法1（结构化格式） > 方法2（白名单UUID过滤）
  */
-function parseJudgeResponse(response: string, expectedIds: string[]): string[] | null {
+export function parseJudgeResponse(response: string, expectedIds: string[]): string[] | null {
   // 方法1：匹配结构化格式（最佳/次佳/第三/第X名/最差）
   const lines = response.split('\n');
   const ranking: string[] = [];

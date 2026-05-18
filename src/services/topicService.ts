@@ -23,7 +23,7 @@ export function loadTopics(): Topic[] {
  * ### 2. 云端摩天阁序
  * > 请模仿王勃《滕王阁序》...
  */
-function parseTopicsFromMarkdown(content: string): Topic[] {
+export function parseTopicsFromMarkdown(content: string): Topic[] {
   const topics: Topic[] = [];
   const lines = content.split('\n');
 
